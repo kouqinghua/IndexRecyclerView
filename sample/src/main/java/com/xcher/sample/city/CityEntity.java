@@ -1,11 +1,11 @@
 package com.xcher.sample.city;
 
-import com.xcher.indexrecyclerview.IndexableEntity;
+import com.xcher.indexrecyclerview.IndexEntity;
 
 /**
  * Created by YoKey on 16/10/7.
  */
-public class CityEntity implements IndexableEntity {
+public class CityEntity implements IndexEntity {
     private long id;
     private String name;
     private String pinyin;

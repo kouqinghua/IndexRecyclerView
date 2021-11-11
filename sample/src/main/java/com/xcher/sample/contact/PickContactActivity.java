@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.xcher.indexrecyclerview.IndexRecyclerView;
-import com.xcher.indexrecyclerview.IndexableAdapter;
+import com.xcher.indexrecyclerview.IndexBaseAdapter;
 import com.xcher.indexrecyclerview.SimpleHeaderAdapter;
 import com.xcher.sample.R;
 import com.xcher.sample.ToastUtil;
@@ -35,11 +35,11 @@ public class PickContactActivity extends AppCompatActivity {
 
         mAdapter = new ContactAdapter(this);
         indexableLayout.setAdapter(mAdapter);
-        mAdapter.setDatas(initDatas());
+        mAdapter.setData(initDatas());
         indexableLayout.setBubbleDrawable(R.drawable.icon_hint_bg);
         indexableLayout.setEnableBubble();
 
-        mAdapter.setOnItemContentClickListener(new IndexableAdapter.OnItemContentClickListener<UserEntity>() {
+        mAdapter.setOnItemContentClickListener(new IndexBaseAdapter.OnItemContentClickListener<UserEntity>() {
             @Override
             public void onItemClick(View v, int originalPosition, int currentPosition, UserEntity entity) {
                 if (originalPosition >= 0) {

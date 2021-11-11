@@ -7,7 +7,7 @@ import java.util.Comparator;
 /**
  * Created by YoKey on 16/10/7.
  */
-class PinyinComparator<T extends IndexableEntity> implements Comparator<EntityWrapper<T>> {
+class PinyinComparator<T extends IndexEntity> implements Comparator<EntityWrapper<T>> {
 
     @Override
     public int compare(EntityWrapper<T> lhs, EntityWrapper<T> rhs) {

@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.xcher.indexrecyclerview.IndexableAdapter;
+import com.xcher.indexrecyclerview.IndexBaseAdapter;
 import com.xcher.sample.R;
 
 /**
  * Created by YoKey on 16/10/8.
  */
-public class ContactAdapter extends IndexableAdapter<UserEntity> {
+public class ContactAdapter extends IndexBaseAdapter<UserEntity> {
     private LayoutInflater mInflater;
 
     public ContactAdapter(Context context) {

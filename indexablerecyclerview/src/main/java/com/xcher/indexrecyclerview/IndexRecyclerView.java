@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,7 +39,12 @@ import com.xcher.indexrecyclerview.database.HeaderFooterDataObserver;
 import com.xcher.indexrecyclerview.database.IndexBarDataObserver;
 
 /**
- * RecyclerView + IndexBar
+ * RecyclerView列表结合字母索引排序
+ * 列表支持联系人、城市等首字母粘性吸顶
+ * 列表滑动联动字母索引选中
+ * 字母索引可选气泡提示与居中提示
+ * 字母索引滑动联动列表活动
+ * 可添加自定义字母索引与自定义RecyclerView头部尾部
  */
 @SuppressWarnings("unchecked")
 public class IndexRecyclerView extends FrameLayout {
@@ -68,7 +74,7 @@ public class IndexRecyclerView extends FrameLayout {
     private RealAdapter mRealAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private IndexableAdapter mIndexAdapter;
+    private IndexBaseAdapter mIndexAdapter;
 
     private TextView mCenter, mBubble;
 
@@ -84,7 +90,7 @@ public class IndexRecyclerView extends FrameLayout {
 
     private Handler mHandler;
 
-    private HeaderFooterDataObserver<EntityWrapper> mHeaderFooterDataSetObserver = new HeaderFooterDataObserver<EntityWrapper>() {
+    private final HeaderFooterDataObserver<EntityWrapper> mHeaderFooterDataSetObserver = new HeaderFooterDataObserver<EntityWrapper>() {
         @Override
         public void onChanged() {
             if (mRealAdapter == null) return;
@@ -104,7 +110,7 @@ public class IndexRecyclerView extends FrameLayout {
         }
     };
 
-    private IndexBarDataObserver mIndexBarDataSetObserver = new IndexBarDataObserver() {
+    private final IndexBarDataObserver mIndexBarDataSetObserver = new IndexBarDataObserver() {
         @Override
         public void onChanged() {
             mIndexBar.setData(mRealAdapter.getItems());
@@ -130,13 +136,13 @@ public class IndexRecyclerView extends FrameLayout {
         PADDING_RIGHT_OVERLAY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IndexableRecyclerView);
-            mBarTextColor = a.getColor(R.styleable.IndexableRecyclerView_indexBar_textColor, ContextCompat.getColor(context, R.color.default_indexBar_textColor));
-            mBarTextSize = a.getDimension(R.styleable.IndexableRecyclerView_indexBar_textSize, getResources().getDimension(R.dimen.default_indexBar_textSize));
-            mBarFocusTextColor = a.getColor(R.styleable.IndexableRecyclerView_indexBar_selectedTextColor, ContextCompat.getColor(context, R.color.default_indexBar_selectedTextColor));
-            mBarTextSpace = a.getDimension(R.styleable.IndexableRecyclerView_indexBar_textSpace, getResources().getDimension(R.dimen.default_indexBar_textSpace));
-            mBarBg = a.getDrawable(R.styleable.IndexableRecyclerView_indexBar_background);
-            mBarWidth = a.getDimension(R.styleable.IndexableRecyclerView_indexBar_layout_width, getResources().getDimension(R.dimen.default_indexBar_layout_width));
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.IndexRecyclerView);
+            mBarTextColor = a.getColor(R.styleable.IndexRecyclerView_indexBar_textColor, ContextCompat.getColor(context, R.color.default_indexBar_textColor));
+            mBarTextSize = a.getDimension(R.styleable.IndexRecyclerView_indexBar_textSize, getResources().getDimension(R.dimen.default_indexBar_textSize));
+            mBarFocusTextColor = a.getColor(R.styleable.IndexRecyclerView_indexBar_selectedTextColor, ContextCompat.getColor(context, R.color.default_indexBar_selectedTextColor));
+            mBarTextSpace = a.getDimension(R.styleable.IndexRecyclerView_indexBar_textSpace, getResources().getDimension(R.dimen.default_indexBar_textSpace));
+            mBarBg = a.getDrawable(R.styleable.IndexRecyclerView_indexBar_background);
+            mBarWidth = a.getDimension(R.styleable.IndexRecyclerView_indexBar_layout_width, getResources().getDimension(R.dimen.default_indexBar_layout_width));
             a.recycle();
         }
 
@@ -162,7 +168,7 @@ public class IndexRecyclerView extends FrameLayout {
         initListener();
     }
 
-    public <T extends IndexableEntity> void setAdapter(final IndexableAdapter<T> adapter) {
+    public <T extends IndexEntity> void setAdapter(final IndexBaseAdapter<T> adapter) {
 
         if (mLayoutManager == null) {
             throw new NullPointerException("You must set the LayoutManager first");
@@ -178,7 +184,7 @@ public class IndexRecyclerView extends FrameLayout {
 
             @Override
             public void onInit() {
-                onSetListener(IndexableAdapter.TYPE_ALL);
+                onSetListener(IndexBaseAdapter.TYPE_ALL);
                 onDataChanged();
             }
 
@@ -191,10 +197,10 @@ public class IndexRecyclerView extends FrameLayout {
 
             @Override
             public void onSetListener(int type) {
-                if ((type == IndexableAdapter.TYPE_CLICK_CONTENT || type == IndexableAdapter.TYPE_ALL) && adapter.getOnItemContentClickListener() != null) {
+                if ((type == IndexBaseAdapter.TYPE_CLICK_CONTENT || type == IndexBaseAdapter.TYPE_ALL) && adapter.getOnItemContentClickListener() != null) {
                     mRealAdapter.setOnItemContentClickListener(adapter.getOnItemContentClickListener());
                 }
-                if ((type == IndexableAdapter.TYPE_LONG_CLICK_CONTENT || type == IndexableAdapter.TYPE_ALL) && adapter.getOnItemContentLongClickListener() != null) {
+                if ((type == IndexBaseAdapter.TYPE_LONG_CLICK_CONTENT || type == IndexBaseAdapter.TYPE_ALL) && adapter.getOnItemContentLongClickListener() != null) {
                     mRealAdapter.setOnItemContentLongClickListener(adapter.getOnItemContentLongClickListener());
                 }
             }
@@ -205,25 +211,25 @@ public class IndexRecyclerView extends FrameLayout {
         initStickyView(adapter);
     }
 
-    public <T> void addHeaderAdapter(IndexableHeaderAdapter<T> adapter) {
+    public <T> void addHeaderAdapter(IndexHeaderAdapter<T> adapter) {
         adapter.registerDataSetObserver(mHeaderFooterDataSetObserver);
         adapter.registerIndexBarDataSetObserver(mIndexBarDataSetObserver);
         mRealAdapter.addIndexableHeaderAdapter(adapter);
     }
 
-    public <T> void removeHeaderAdapter(IndexableHeaderAdapter<T> adapter) {
+    public <T> void removeHeaderAdapter(IndexHeaderAdapter<T> adapter) {
         adapter.unregisterDataSetObserver(mHeaderFooterDataSetObserver);
         adapter.unregisterIndexBarDataSetObserver(mIndexBarDataSetObserver);
         mRealAdapter.removeIndexableHeaderAdapter(adapter);
     }
 
-    public <T> void addFooterAdapter(IndexableFooterAdapter<T> adapter) {
+    public <T> void addFooterAdapter(IndexFooterAdapter<T> adapter) {
         adapter.registerDataSetObserver(mHeaderFooterDataSetObserver);
         adapter.registerIndexBarDataSetObserver(mIndexBarDataSetObserver);
         mRealAdapter.addIndexableFooterAdapter(adapter);
     }
 
-    public <T> void removeFooterAdapter(IndexableFooterAdapter<T> adapter) {
+    public <T> void removeFooterAdapter(IndexFooterAdapter<T> adapter) {
         adapter.unregisterDataSetObserver(mHeaderFooterDataSetObserver);
         adapter.unregisterIndexBarDataSetObserver(mIndexBarDataSetObserver);
         mRealAdapter.removeIndexableFooterAdapter(adapter);
@@ -243,8 +249,8 @@ public class IndexRecyclerView extends FrameLayout {
     private void initListener() {
         mRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onScrolled(@NonNull RecyclerView recycler, int dx, int dy) {
+                super.onScrolled(recycler, dx, dy);
                 processScrollListener();
             }
         });
@@ -358,35 +364,8 @@ public class IndexRecyclerView extends FrameLayout {
         }
     }
 
-    private <T extends IndexableEntity> void initStickyView(final IndexableAdapter<T> adapter) {
+    private <T extends IndexEntity> void initStickyView(final IndexBaseAdapter<T> adapter) {
         mStickyViewHolder = adapter.onCreateTitleViewHolder(mRecycler);
-        mStickyViewHolder.itemView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (adapter.getOnItemTitleClickListener() != null) {
-                    int position = mIndexBar.getFirstRecyclerViewPositionBySelection();
-                    ArrayList<EntityWrapper> datas = mRealAdapter.getItems();
-                    if (datas.size() > position && position >= 0) {
-                        adapter.getOnItemTitleClickListener().onItemClick(
-                                v, position, datas.get(position).getIndexTitle());
-                    }
-                }
-            }
-        });
-        mStickyViewHolder.itemView.setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (adapter.getOnItemTitleLongClickListener() != null) {
-                    int position = mIndexBar.getFirstRecyclerViewPositionBySelection();
-                    ArrayList<EntityWrapper> datas = mRealAdapter.getItems();
-                    if (datas.size() > position && position >= 0) {
-                        return adapter.getOnItemTitleLongClickListener().onItemLongClick(
-                                v, position, datas.get(position).getIndexTitle());
-                    }
-                }
-                return false;
-            }
-        });
         for (int i = 0; i < getChildCount(); i++) {
             if (getChildAt(i) == mRecycler) {
                 mStickyViewHolder.itemView.setVisibility(INVISIBLE);
@@ -531,7 +510,7 @@ public class IndexRecyclerView extends FrameLayout {
         });
     }
 
-    private <T extends IndexableEntity> ArrayList<EntityWrapper<T>> transform(final List<T> datas) {
+    private <T extends IndexEntity> ArrayList<EntityWrapper<T>> transform(final List<T> data) {
         try {
             TreeMap<String, List<EntityWrapper<T>>> map = new TreeMap<>(new Comparator<String>() {
                 @Override
@@ -545,24 +524,23 @@ public class IndexRecyclerView extends FrameLayout {
                 }
             });
 
-            for (int i = 0; i < datas.size(); i++) {
+            for (int i = 0; i < data.size(); i++) {
                 EntityWrapper<T> entity = new EntityWrapper<>();
-                T item = datas.get(i);
+                T item = data.get(i);
                 String indexName = item.getFieldIndexBy();
                 String pinyin = PinyinUtil.getPingYin(indexName);
                 entity.setPinyin(pinyin);
 
-                // init EntityWrapper
                 if (PinyinUtil.matchingLetter(pinyin)) {
                     entity.setIndex(pinyin.substring(0, 1).toUpperCase());
                     entity.setIndexByField(item.getFieldIndexBy());
                 } else if (PinyinUtil.matchingPolyphone(pinyin)) {
                     entity.setIndex(PinyinUtil.gePolyphoneInitial(pinyin).toUpperCase());
                     entity.setPinyin(PinyinUtil.getPolyphoneRealPinyin(pinyin));
-                    String hanzi = PinyinUtil.getPolyphoneRealHanzi(indexName);
-                    entity.setIndexByField(hanzi);
+                    String hanZi = PinyinUtil.getPolyphoneRealHanzi(indexName);
+                    entity.setIndexByField(hanZi);
                     // 把多音字的真实indexField重新赋值
-                    item.setFieldIndexBy(hanzi);
+                    item.setFieldIndexBy(hanZi);
                 } else {
                     entity.setIndex(INDEX_SIGN);
                     entity.setIndexByField(item.getFieldIndexBy());

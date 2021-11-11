@@ -3,7 +3,7 @@ package com.xcher.indexrecyclerview;
 /**
  * Created by YoKey on 16/10/9.
  */
-public interface IndexableEntity {
+public interface IndexEntity {
 
     String getFieldIndexBy();
 

@@ -6,9 +6,9 @@ import java.util.List;
  * HeaderView Adapter
  * Created by YoKey on 16/10/8.
  */
-public abstract class IndexableHeaderAdapter<T> extends AbstractHeaderFooterAdapter<T>{
+public abstract class IndexHeaderAdapter<T> extends AbstractHeaderFooterAdapter<T>{
 
-    public IndexableHeaderAdapter(String index, String indexTitle, List<T> datas) {
+    public IndexHeaderAdapter(String index, String indexTitle, List<T> datas) {
         super(index, indexTitle, datas);
     }
 

@@ -1,11 +1,11 @@
 package com.xcher.sample.contact;
 
-import com.xcher.indexrecyclerview.IndexableEntity;
+import com.xcher.indexrecyclerview.IndexEntity;
 
 /**
  * Created by YoKey on 16/10/8.
  */
-public class UserEntity implements IndexableEntity {
+public class UserEntity implements IndexEntity {
     private String nick;
     private String avatar;
     private String mobile;

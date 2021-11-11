@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.xcher.indexrecyclerview.IndexableAdapter;
+import com.xcher.indexrecyclerview.IndexBaseAdapter;
 import com.xcher.sample.R;
 
 /**
  * Created by YoKey on 16/10/7.
  */
-public class CityAdapter extends IndexableAdapter<CityEntity> {
+public class CityAdapter extends IndexBaseAdapter<CityEntity> {
     private LayoutInflater mInflater;
 
     public CityAdapter(Context context) {

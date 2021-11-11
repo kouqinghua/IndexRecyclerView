@@ -30,7 +30,7 @@ public class DataObservable extends Observable<DataObserver> {
      * Called when the data set is no longer valid and cannot be queried again,
      * such as when the data set has been closed.
      */
-    public void notifyInited() {
+    public void notifyInit() {
         synchronized (mObservers) {
             for (int i = mObservers.size() - 1; i >= 0; i--) {
                 mObservers.get(i).onInit();
