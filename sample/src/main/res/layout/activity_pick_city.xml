@@ -6,7 +6,7 @@
               android:background="@android:color/white"
               android:orientation="vertical">
 
-    <android.support.v7.widget.SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/searchview"
         android:layout_width="match_parent"
         android:layout_height="42dp"
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <me.yokeyword.indexablerv.IndexableLayout
+        <com.xcher.indexrecyclerview.IndexRecyclerView
             android:id="@+id/indexableLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,7 +37,7 @@
 
         <fragment
             android:id="@+id/search_fragment"
-            class="me.yokeyword.sample.city.SearchFragment"
+            class="com.xcher.sample.city.SearchFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

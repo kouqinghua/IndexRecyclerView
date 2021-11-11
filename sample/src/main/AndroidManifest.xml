@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.yokeyword.sample">
+    package="com.xcher.sample">
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.xcher.sample.contact.PickContactActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,10 +19,7 @@
         </activity>
 
         <activity
-            android:name=".city.PickCityActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".contact.PickContactActivity"
+            android:name="com.xcher.sample.city.PickCityActivity"
             android:screenOrientation="portrait" />
     </application>
 

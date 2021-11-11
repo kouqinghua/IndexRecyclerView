@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="me.yokeyword.indexablerecyclerview">
+          package="com.xcher.indexablerecyclerview">
 
     <uses-sdk
         tools:overrideLibrary="com.github.promeg.tinypinyin.lexicons.android.cncity,com.github.promeg.tinypinyin.android.asset.lexicons"/>

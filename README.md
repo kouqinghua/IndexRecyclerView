@@ -55,7 +55,7 @@ A RecyclerView with indexable, sticky and many other features.
 
 ### Xml
 ````xml
- <me.yokeyword.indexablerv.IndexableLayout
+ <me.yokeyword.indexablerv.IndexRecyclerView
      ...
      app:indexBar_layout_width="24dp"           // IndexBar：width
      app:indexBar_background="#08000000"        // IndexBar：background

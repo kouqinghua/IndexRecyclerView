@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "me.yokeyword.indexablecv.sample"
         minSdkVersion 14
-        targetSdkVersion 24
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
@@ -21,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile project(':indexablerecyclerview')
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation project(':indexablerecyclerview')
 }
